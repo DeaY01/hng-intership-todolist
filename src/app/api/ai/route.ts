@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
 
     if (!apiKey) {
       return NextResponse.json(
-        { error: "XAI_API_KEY is missing in .env.local" },
+        { error: "XAI_API_KEY is not configured in Vercel settings." },
         { status: 500 }
       );
     }
@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: "grok-4.7",          // updated model name
+        model: "grok-3",
         messages: [
           {
             role: "system",
@@ -45,12 +45,11 @@ export async function POST(req: NextRequest) {
 
     const data = await response.json();
 
-    // Show the real error if something goes wrong
     if (!response.ok) {
       console.error("xAI Error:", data);
       return NextResponse.json(
-        { error: data.error || data.message || "AI request failed" },
-        { status: 500 }
+        { error: data.error?.message || data.error || "AI request failed" },
+        { status: response.status }
       );
     }
 
